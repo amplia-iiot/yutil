@@ -75,9 +75,12 @@ version: changelog ## Generate version
 	git commit -m "chore: update changelog for $(VERSION)"
 	git tag -a $(VERSION) -m "$(patsubst v%,Version %,$(VERSION))"
 
+release-notes: ## Print release notes for current version
+	git-chglog -c .chglog/release-notes.yml $(shell svu current || echo "--next-tag v1.0.0")
+
 release: ## Build release
 ifeq ($(EXPORT_RESULT), true)
-	goreleaser
+	goreleaser --rm-dist --release-notes <($(MAKE) -s release-notes)
 else
 	goreleaser --snapshot --skip-publish --rm-dist
 endif
