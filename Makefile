@@ -28,6 +28,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/AlekSi/gocov-xml@latest
 	$(GOCMD) install github.com/jstemmer/go-junit-report@latest
 	$(GOCMD) install github.com/cosmtrek/air@latest
+	$(GOCMD) install github.com/spf13/cobra/cobra@latest
 
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist

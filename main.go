@@ -21,5 +21,8 @@ SOFTWARE.
 */
 package main
 
+import "github.com/amplia-iiot/yutil/cmd"
+
 func main() {
+	cmd.Execute()
 }
