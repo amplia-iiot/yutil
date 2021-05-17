@@ -106,9 +106,15 @@ func bindViper(cmd *cobra.Command, name string) {
 
 // Binds a cobra flag with a custom viper config key
 func bindViperC(cmd *cobra.Command, cobraName string, viperName string) {
-	viper.BindEnv(viperName, fmt.Sprintf("%s_%s", envPrefix, strings.ToUpper(strings.ReplaceAll(strings.ReplaceAll(viperName, ".", "_"), "-", "_"))))
+	err := viper.BindEnv(viperName, fmt.Sprintf("%s_%s", envPrefix, strings.ToUpper(strings.ReplaceAll(strings.ReplaceAll(viperName, ".", "_"), "-", "_"))))
+	if err != nil {
+		panic(err)
+	}
 	if !cmd.Flag(cobraName).Changed && viper.IsSet(viperName) {
-		cmd.Flags().Set(cobraName, fmt.Sprintf("%v", viper.Get(viperName)))
+		err := cmd.Flags().Set(cobraName, fmt.Sprintf("%v", viper.Get(viperName)))
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
