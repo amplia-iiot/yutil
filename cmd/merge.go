@@ -57,7 +57,7 @@ echo "this is not a yaml" | yutil --no-input merge base.yml changes.yml
 		}
 		for _, file := range args {
 			if !io.Exists(file) {
-				return errors.New(fmt.Sprintf("file %s does not exist", file))
+				return fmt.Errorf("file %s does not exist", file)
 			}
 		}
 		return nil
