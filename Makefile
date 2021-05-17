@@ -32,6 +32,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/goreleaser/goreleaser@latest
 	$(GOCMD) install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 	$(GOCMD) install github.com/caarlos0/svu@latest
+	$(GOCMD) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
@@ -52,6 +53,9 @@ coverage: ## Run the tests of the project and export the coverage
 ifeq ($(EXPORT_RESULT), true)
 	gocov convert profile.cov | gocov-xml > coverage.xml
 endif
+
+lint: ## Run linters
+	golangci-lint run
 
 #########
 ##@ Build

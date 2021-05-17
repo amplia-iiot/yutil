@@ -2,8 +2,8 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  cmd = "make build"
-  bin = "test.sh"
+  cmd = "make -s build"
+  bin = "air.sh"
   delay = 100
   exclude_dir = ["assets", "bin", "out", "tmp", "vendor"]
   exclude_file = []
