@@ -15,5 +15,8 @@ junit-report.xml
 *.cov
 coverage.xml
 
+# Release directories
+dist/
+
 # Dependency directories (remove the comment below to include it)
 # vendor/

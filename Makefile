@@ -29,6 +29,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/jstemmer/go-junit-report@latest
 	$(GOCMD) install github.com/cosmtrek/air@latest
 	$(GOCMD) install github.com/spf13/cobra/cobra@latest
+	$(GOCMD) install github.com/goreleaser/goreleaser@latest
 
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
@@ -55,6 +56,16 @@ endif
 
 build: ## Build project for current arch
 	GO111MODULE=on $(GOCMD) build ${LDFLAGS} -o ${BINARY}
+
+###########
+##@ Release
+
+release: ## Build release
+ifeq ($(EXPORT_RESULT), true)
+	goreleaser
+else
+	goreleaser --snapshot --skip-publish --rm-dist
+endif
 
 ########
 ##@ Help
