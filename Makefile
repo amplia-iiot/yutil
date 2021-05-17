@@ -31,6 +31,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/spf13/cobra/cobra@latest
 	$(GOCMD) install github.com/goreleaser/goreleaser@latest
 	$(GOCMD) install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+	$(GOCMD) install github.com/caarlos0/svu@latest
 
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
@@ -63,6 +64,12 @@ build: ## Build project for current arch
 
 changelog: ## Generate changelog
 	git-chglog --next-tag $(VERSION) -o CHANGELOG.md
+
+version: VERSION=$(shell svu next || echo "v1.0.0")
+version: changelog ## Generate version
+	git add CHANGELOG.md
+	git commit -m "chore: update changelog for $(VERSION)"
+	git tag -a $(VERSION) -m "$(patsubst v%,Version %,$(VERSION))"
 
 release: ## Build release
 ifeq ($(EXPORT_RESULT), true)
