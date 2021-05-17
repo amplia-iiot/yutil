@@ -1,0 +1,43 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/amplia-iiot/yutil
+options:
+  commits:
+    filters:
+      Type:
+        - feat
+        - fix
+        - perf
+        - refactor
+        - revert
+        - build
+        - docs
+  commit_groups:
+    sort_by: Custom
+    title_order:
+      - fix
+      - feat
+      - perf
+      - refactor
+      - revert
+      - build
+      - docs
+    title_maps:
+      feat: Features
+      fix: Bug Fixes
+      perf: Performance Improvements
+      refactor: Code Refactoring
+      revert: Reverts
+      build: Build changes
+      docs: Documentation changes
+  header:
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?!?\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Scope
+      - Subject
+  notes:
+    keywords:
+      - BREAKING CHANGE

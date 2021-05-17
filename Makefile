@@ -30,6 +30,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/cosmtrek/air@latest
 	$(GOCMD) install github.com/spf13/cobra/cobra@latest
 	$(GOCMD) install github.com/goreleaser/goreleaser@latest
+	$(GOCMD) install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
@@ -59,6 +60,9 @@ build: ## Build project for current arch
 
 ###########
 ##@ Release
+
+changelog: ## Generate changelog
+	git-chglog --next-tag $(VERSION) -o CHANGELOG.md
 
 release: ## Build release
 ifeq ($(EXPORT_RESULT), true)
