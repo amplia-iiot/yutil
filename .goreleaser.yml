@@ -12,6 +12,8 @@ builds:
       - linux
       - windows
       - darwin
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=amplia-iiot
 release:
   prerelease: auto
 archives:
@@ -28,7 +30,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Env.YUTIL_NEXT }}"
 changelog:
   sort: asc
   filters:

@@ -47,7 +47,21 @@ var rootCmd = &cobra.Command{
 	Long:  `Common functionality for working with YAML files`,
 }
 
-func Execute() {
+type BuildInfo struct {
+	Version string
+	Commit  string
+	Date    string
+	BuiltBy string
+}
+
+func (b *BuildInfo) format() string {
+	return fmt.Sprintf("yutil %s, built at %s by %s from %s", b.Version, b.Date, b.BuiltBy, b.Commit)
+}
+
+var buildInfo BuildInfo
+
+func Execute(info BuildInfo) {
+	buildInfo = info
 	cobra.CheckErr(rootCmd.Execute())
 }
 

@@ -8,6 +8,8 @@ BUILD=`git rev-parse HEAD`
 DOCKER_REGISTRY?= #if set it should finished by /
 EXPORT_RESULT?=true # for CI please set EXPORT_RESULT to true
 
+LDFLAGS ?= "-X 'main.version=$(VERSION)' -X 'main.commit=$(shell git rev-parse HEAD)' -X 'main.date=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")' -X 'main.builtBy=$(shell whoami)'"
+
 YELLOW := $(shell tput -Txterm setaf 3)
 CYAN   := $(shell tput -Txterm setaf 6)
 WHITE  := $(shell tput -Txterm setaf 7)
@@ -61,7 +63,7 @@ lint: ## Run linters
 ##@ Build
 
 build: ## Build project for current arch
-	GO111MODULE=on $(GOCMD) build ${LDFLAGS} -o ${BINARY}
+	GO111MODULE=on $(GOCMD) build -ldflags=$(LDFLAGS) -o ${BINARY}
 
 ###########
 ##@ Release
@@ -82,7 +84,7 @@ release: ## Build release
 ifeq ($(EXPORT_RESULT), true)
 	goreleaser --rm-dist --release-notes <($(MAKE) -s release-notes)
 else
-	goreleaser --snapshot --skip-publish --rm-dist
+	YUTIL_NEXT="$(VERSION)" goreleaser --snapshot --skip-publish --rm-dist
 endif
 
 ########

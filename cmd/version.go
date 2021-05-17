@@ -19,20 +19,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package main
+package cmd
 
 import (
-	"github.com/amplia-iiot/yutil/cmd"
+	"fmt"
+
+	"github.com/spf13/cobra"
 )
 
-// info is passed in via LDFLAGS
-var (
-	version = "dev"
-	commit  = "unknown"
-	date    = "unknown"
-	builtBy = "unknown"
-)
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Show the yutil version",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(buildInfo.format())
+	},
+}
 
-func main() {
-	cmd.Execute(cmd.BuildInfo{Version: version, Commit: commit, Date: date, BuiltBy: builtBy})
+func init() {
+	rootCmd.AddCommand(versionCmd)
 }
