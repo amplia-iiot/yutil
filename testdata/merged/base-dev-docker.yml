@@ -1,0 +1,15 @@
+app:
+  api:
+    url: http://service
+    version: v1-dev
+  cluster:
+    hosts:
+    - http://service-1
+    - http://service-2
+  description: YAML utils
+  env:
+    dev: true
+    docker: true
+  long-description: Common functionality for working with YAML files
+  name: yutil
+  version: 1.0.0-alpha

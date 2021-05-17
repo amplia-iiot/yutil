@@ -23,9 +23,27 @@ all: help
 deps: ## Download project dependencies
 	GO111MODULE=on $(GOCMD) mod download
 
+set-up: ## Set up development environment
+	$(GOCMD) install github.com/axw/gocov/gocov@latest
+	$(GOCMD) install github.com/AlekSi/gocov-xml@latest
+	$(GOCMD) install github.com/jstemmer/go-junit-report@latest
+
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
 	rm -f ${BINARY} ./junit-report.xml checkstyle-report.xml ./coverage.xml ./profile.cov yamllint-checkstyle.xml
+
+test: ## Run the tests of the project
+ifeq ($(EXPORT_RESULT), true)
+	$(eval OUTPUT_OPTIONS = | tee /dev/tty | go-junit-report -set-exit-code > junit-report.xml)
+endif
+	GOFLAGS="-count=1" $(GOTEST) -v -race ./... $(OUTPUT_OPTIONS)
+
+coverage: ## Run the tests of the project and export the coverage
+	$(GOTEST) -cover -covermode=count -coverprofile=profile.cov ./...
+	$(GOCMD) tool cover -func profile.cov
+ifeq ($(EXPORT_RESULT), true)
+	gocov convert profile.cov | gocov-xml > coverage.xml
+endif
 
 #########
 ##@ Build

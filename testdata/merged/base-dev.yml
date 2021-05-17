@@ -1,0 +1,14 @@
+app:
+  api:
+    url: http://localhost:8080
+    version: v1-dev
+  cluster:
+    hosts:
+    - http://localhost:8081
+    - http://localhost:8082
+  description: YAML utils
+  env:
+    dev: true
+  long-description: Common functionality for working with YAML files
+  name: yutil
+  version: 1.0.0-alpha

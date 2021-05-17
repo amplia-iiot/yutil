@@ -1,0 +1,9 @@
+app:
+  version: 1.0.0-alpha
+  api:
+    version: v1-dev
+    url: 'http://localhost:8080'
+  env:
+    dev: true
+  cluster:
+    hosts: [http://localhost:8081, http://localhost:8082]

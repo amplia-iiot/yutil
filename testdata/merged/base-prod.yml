@@ -1,0 +1,14 @@
+app:
+  api:
+    url: http://prod.com/service
+    version: v1
+  cluster:
+    hosts:
+    - http://prod.com/service-1
+    - http://prod.com/service-2
+  description: YAML utils
+  env:
+    prod: true
+  long-description: Common functionality for working with YAML files
+  name: yutil
+  version: 1.0.0

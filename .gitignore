@@ -8,9 +8,12 @@ yutil
 
 # Test binary, built with `go test -c`
 *.test
+junit-report.xml
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+*.cov
+coverage.xml
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
