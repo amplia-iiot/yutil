@@ -90,6 +90,7 @@ func initConfig() {
 		viper.AddConfigPath(".")
 		viper.AddConfigPath(home)
 		viper.SetConfigName(defaultConfigFile)
+		viper.SetConfigType("yaml")
 	}
 
 	viper.SetEnvPrefix(envPrefix)
