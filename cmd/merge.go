@@ -36,7 +36,7 @@ var outputFile string
 // mergeCmd represents the merge command
 var mergeCmd = &cobra.Command{
 	Use:   "merge FILE [FILE...]",
-	Short: "merge yaml files",
+	Short: "Merge yaml files",
 	Long: `Merge as many yaml files as desired. Files should be ordered
 in ascending level of importance in the hierarchy. A yaml
 node in the last file replaces values in any previous file.
