@@ -3,7 +3,7 @@ tmp_dir = "tmp"
 
 [build]
   cmd = "make -s build"
-  bin = "air.sh"
+  bin = ".air/check.sh"
   delay = 100
   exclude_dir = ["assets", "bin", "out", "tmp", "vendor"]
   exclude_file = []
