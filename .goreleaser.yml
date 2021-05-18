@@ -37,3 +37,17 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+nfpms:
+- homepage:  https://github.com/amplia-iiot/yutil
+  description: Common functionality for working with YAML files
+  maintainer: Adrian Haasler Garcia <adrian.haasler@amplia.es>
+  license: MIT
+  vendor: Amplia Soluciones, S.L.
+  formats:
+  - apk
+  - deb
+  - rpm
+  replacements:
+    linux: Linux
+    386: i386
+    amd64: x86_64
