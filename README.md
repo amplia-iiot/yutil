@@ -2,6 +2,7 @@
 
 [![Test Status](https://github.com/amplia-iiot/yutil/workflows/Test/badge.svg)](https://github.com/amplia-iiot/yutil/actions/workflows/test.yml)
 [![Lint Status](https://github.com/amplia-iiot/yutil/workflows/Lint/badge.svg)](https://github.com/amplia-iiot/yutil/actions/workflows/lint.yml)
+[![Codecov report](https://img.shields.io/codecov/c/github/amplia-iiot/yutil/main.svg)](https://codecov.io/gh/amplia-iiot/yutil)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://www.conventionalcommits.org/en/v1.0.0/)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/amplia-iiot/yutil/blob/main/LICENSE)
 
