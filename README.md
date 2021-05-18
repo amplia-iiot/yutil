@@ -1,5 +1,6 @@
 # yutil
 
+[![Latest Release](https://img.shields.io/github/release/amplia-iiot/yutil.svg)](https://github.com/amplia-iiot/yutil/releases/latest)
 [![Test Status](https://github.com/amplia-iiot/yutil/workflows/Test/badge.svg)](https://github.com/amplia-iiot/yutil/actions/workflows/test.yml)
 [![Lint Status](https://github.com/amplia-iiot/yutil/workflows/Lint/badge.svg)](https://github.com/amplia-iiot/yutil/actions/workflows/lint.yml)
 [![Codecov report](https://img.shields.io/codecov/c/github/amplia-iiot/yutil/main.svg)](https://codecov.io/gh/amplia-iiot/yutil)
