@@ -128,11 +128,10 @@ You may pass as argument the desired config file:
 2. Fork (https://github.com/amplia-iiot/yutil)
 3. Run `make set-up` to install dev tools
 4. Create a feature branch
-5. Confirm the tests with `make test`
-6. Confirm linting with `make lint`
-7. Commit your changes following [Conventional Commits]
-8. Rebase your local changes against the upstream _main_ branch
-9. Create a Pull Request
+5. Check changes (test & lint) with `make check`
+6. Commit your changes following [Conventional Commits]
+7. Rebase your local changes against the upstream _main_ branch
+8. Create a Pull Request
 
 You are welcome to report bugs or add feature requests and comments in [issues].
 

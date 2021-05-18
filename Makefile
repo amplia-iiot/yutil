@@ -10,6 +10,9 @@ EXPORT_RESULT?=true # for CI please set EXPORT_RESULT to true
 
 LDFLAGS ?= "-X 'main.version=$(VERSION)' -X 'main.commit=$(shell git rev-parse HEAD)' -X 'main.date=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")' -X 'main.builtBy=$(shell whoami)'"
 
+
+RED    := $(shell tput -Txterm setaf 1)
+GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
 CYAN   := $(shell tput -Txterm setaf 6)
 WHITE  := $(shell tput -Txterm setaf 7)
@@ -45,6 +48,10 @@ ifeq ($(EXPORT_RESULT), true)
 	$(eval OUTPUT_OPTIONS = | tee /dev/tty | go-junit-report -set-exit-code > junit-report.xml)
 endif
 	GOFLAGS="-count=1" $(GOTEST) -v -race ./... $(OUTPUT_OPTIONS)
+
+check: ## Check the source code (test & lint)
+	( ( ($(MAKE) -s test) && printf '${GREEN}Tests - OK${RESET}\n' ) || printf '${RED}Tests - failed${RESET}\n' )
+	( ( ($(MAKE) -s lint) && printf '${GREEN}Lint  - OK${RESET}\n' ) || printf '${RED}Lint  - failed${RESET}\n' )
 
 watch: ## Run air to execute tests when a change is detected
 	air
