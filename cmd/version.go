@@ -30,7 +30,8 @@ import (
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Show the yutil version",
+	Short: "Show the yutil version build info",
+	Long:  "Show the yutil version complete build info",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(buildInfo.format())
 	},

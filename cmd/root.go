@@ -39,12 +39,23 @@ const (
 )
 
 var cfgFile string
+var version bool
 var viperInitializers []func()
 
 var rootCmd = &cobra.Command{
 	Use:   "yutil",
 	Short: "YAML utils",
 	Long:  `Common functionality for working with YAML files`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if version {
+			fmt.Println(buildInfo.Version)
+			os.Exit(0)
+		}
+		err := cmd.Help()
+		if err != nil {
+			panic(err)
+		}
+	},
 }
 
 type BuildInfo struct {
@@ -68,6 +79,7 @@ func Execute(info BuildInfo) {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.Flags().BoolVarP(&version, "version", "v", false, "show the yutil version in short format")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./.yutil or $HOME/.yutil)")
 	rootCmd.PersistentFlags().Bool("no-input", false, "ignore stdin input (by default stdin is read as yaml content)")
 	OnViperInitialize(func() {
