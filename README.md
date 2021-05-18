@@ -14,7 +14,8 @@ Common functionality for working with YAML files
 	- [Features](#features)
 	- [Getting started](#getting-started)
 		- [Installation](#installation)
-			- [Binary](#binary)
+			- [deb/rpm/apk:](#debrpmapk)
+			- [Manual](#manual)
 			- [Go users](#go-users)
 		- [Test installation](#test-installation)
 		- [Quick Start](#quick-start)
@@ -35,9 +36,13 @@ Common functionality for working with YAML files
 
 Install `yutil` with your preferred method:
 
-#### Binary
+#### deb/rpm/apk:
 
-Download the [latest release] and add the binary to your path.
+Download the .deb, .rpm or .apk from the [latest release] and install them with the appropriate tools.
+
+#### Manual
+
+Download the `.tar.gz` from the [latest release] and add the binary to your path.
 
 #### Go users
 
