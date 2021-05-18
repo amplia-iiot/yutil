@@ -1,5 +1,10 @@
 # yutil
 
+[![Test Status](https://github.com/amplia-iiot/yutil/workflows/Test/badge.svg)](https://github.com/amplia-iiot/yutil/actions/workflows/test.yml)
+[![Lint Status](https://github.com/amplia-iiot/yutil/workflows/Lint/badge.svg)](https://github.com/amplia-iiot/yutil/actions/workflows/lint.yml)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://www.conventionalcommits.org/en/v1.0.0/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/amplia-iiot/yutil/blob/main/LICENSE)
+
 Common functionality for working with YAML files
 
 ## Table of contents
@@ -15,6 +20,10 @@ Common functionality for working with YAML files
 		- [Quick Start](#quick-start)
 			- [Merge](#merge)
 			- [External configuration](#external-configuration)
+	- [Development](#development)
+	- [Release Process](#release-process)
+	- [CHANGELOG](#changelog)
+	- [License](#license)
 
 ## Features
 
@@ -28,7 +37,7 @@ Install `yutil` with your preferred method:
 
 #### Binary
 
-Download the [latest release](https://github.com/amplia-iiot/yutil/releases/latest) and add the binary to your path.
+Download the [latest release] and add the binary to your path.
 
 #### Go users
 
@@ -107,3 +116,36 @@ You may pass as argument the desired config file:
 ```
 
 > Supported formats: JSON, TOML, YAML, HCL, envfile and Java properties config files
+
+## Development
+
+1. Use Golang version `>= 1.16`
+2. Fork (https://github.com/amplia-iiot/yutil)
+3. Run `make set-up` to install dev tools
+4. Create a feature branch
+5. Confirm the tests with `make test`
+6. Confirm linting with `make lint`
+7. Commit your changes following [Conventional Commits]
+8. Rebase your local changes against the upstream _main_ branch
+9. Create a Pull Request
+
+You are welcome to report bugs or add feature requests and comments in [issues].
+
+## Release Process
+
+`make version` contains the steps to generate a new version. It uses `svu` to calculate the next version number based on the _git log_ and generates the [CHANGELOG.md] with `git-chglog`
+
+Push the generated _tag_ and the _release_ github action will generate the release.
+
+## CHANGELOG
+
+See [CHANGELOG.md]
+
+## License
+
+[MIT © amplia-iiot](./LICENSE)
+
+[latest release]: https://github.com/amplia-iiot/yutil/releases/latest
+[Conventional Commits]: https://www.conventionalcommits.org/en/v1.0.0/
+[issues]: https://github.com/amplia-iiot/yutil/issues
+[CHANGELOG.md]: ./CHANGELOG.md
