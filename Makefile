@@ -20,6 +20,10 @@ RESET  := $(shell tput -Txterm sgr0)
 
 .PHONY: all test build
 
+ifndef VERBOSE
+.SILENT:
+endif
+
 all: help
 
 ###############
