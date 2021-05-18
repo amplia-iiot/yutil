@@ -1,2 +1,109 @@
 # yutil
+
 Common functionality for working with YAML files
+
+## Table of contents
+
+- [yutil](#yutil)
+	- [Table of contents](#table-of-contents)
+	- [Features](#features)
+	- [Getting started](#getting-started)
+		- [Installation](#installation)
+			- [Binary](#binary)
+			- [Go users](#go-users)
+		- [Test installation](#test-installation)
+		- [Quick Start](#quick-start)
+			- [Merge](#merge)
+			- [External configuration](#external-configuration)
+
+## Features
+
+- [Merge](#merge) files
+
+## Getting started
+
+### Installation
+
+Install `yutil` with your preferred method:
+
+#### Binary
+
+Download the [latest release](https://github.com/amplia-iiot/yutil/releases/latest) and add the binary to your path.
+
+#### Go users
+
+```bash
+go install github.com/amplia-iiot/yutil@latest
+```
+
+### Test installation
+
+```bash
+yutil version
+```
+
+### Quick Start
+
+```bash
+yutil help
+```
+
+#### Merge
+
+This outputs a formatted (ordered and cleaned) _YAML_ file resulting of merging the passed yaml files (or content).
+
+The files are merged in ascending level of importance in the hierarchy. A yaml node in the last file replaces values in
+any previous file. You may pass as many _YAML_ files as desired:
+
+```bash
+yutil merge base.yml changes.yml
+yutil merge base.yml changes.yml important.yml
+```
+
+Use `-o` (`--output`) option if you want to output to a file instead of stdout.
+
+```bash
+yutil merge base.yml changes.yml -o merged.yml
+```
+
+By default `yutil` uses _stdin_ as the first _YAML_ content:
+
+```bash
+cat base.yml | yutil merge changes.yml > merged.yml
+```
+
+You may ignore this input if you can't control what's piped to `yutil`:
+
+```bash
+echo "this is not a yaml" | yutil --no-input merge base.yml changes.yml
+```
+
+#### External configuration
+
+You may want to always use the same config without writting the flags, `yutil` reads a _YAML_ file to configure itself from the current folder or the user home dir in these order of precedence:
+- `.yutil.yaml` in current folder
+- `.yutil.yml` in current folder
+- `.yutil` in current folder
+- `.yutil.yaml` in user home dir
+- `.yutil.yml` in user home dir
+- `.yutil` in user home dir
+
+Sample configuration file:
+
+```yaml
+# Disable stdin
+no-input: true
+# Merge specific config
+merge:
+  # Merge output file
+  output: /tmp/merged.yml
+```
+
+You may pass as argument the desired config file:
+
+```bash
+# Including extension to support multiple config types
+./yutil version --config config.properties
+```
+
+> Supported formats: JSON, TOML, YAML, HCL, envfile and Java properties config files
