@@ -23,11 +23,11 @@ jobs:
       - name: Set up environment
         run: make set-up
       - name: Generate release notes
-        run: make -s release-notes | tee release-notes.md
+        run: mkdir -p tmp && make -s release-notes | tee tmp/release-notes.md
       - name: Release
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
-          args: release --rm-dist --release-notes release-notes.md
+          args: release --rm-dist --release-notes tmp/release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
