@@ -29,7 +29,7 @@ all: help
 ###############
 ##@ Development
 
-deps: ## Download project dependencies
+deps: ## Download dependencies
 	GO111MODULE=on $(GOCMD) mod download
 
 set-up: ## Set up development environment
@@ -47,33 +47,30 @@ clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
 	rm -f ${BINARY} ./junit-report.xml checkstyle-report.xml ./coverage.xml ./profile.cov yamllint-checkstyle.xml
 
-test: ## Run the tests of the project
+test: ## Run tests
 ifeq ($(EXPORT_RESULT), true)
 	$(eval OUTPUT_OPTIONS = | tee /dev/tty | go-junit-report -set-exit-code > junit-report.xml)
 endif
 	GOFLAGS="-count=1" $(GOTEST) -v -race ./... $(OUTPUT_OPTIONS)
 
+lint: ## Run linters
+	golangci-lint run
+
 check: ## Check the source code (test & lint)
 	( ( ($(MAKE) -s test) && printf '${GREEN}Tests - OK${RESET}\n' ) || printf '${RED}Tests - failed${RESET}\n' )
 	( ( ($(MAKE) -s lint) && printf '${GREEN}Lint  - OK${RESET}\n' ) || printf '${RED}Lint  - failed${RESET}\n' )
 
-watch: ## Run air to execute tests when a change is detected
+watch: ## Run check when a change is detected
 	air
 
-coverage: ## Run the tests of the project and export the coverage
+coverage: ## Generate a coverage report
 	$(GOTEST) -cover -covermode=count -coverprofile=profile.cov ./...
 	$(GOCMD) tool cover -func profile.cov
 ifeq ($(EXPORT_RESULT), true)
 	gocov convert profile.cov | gocov-xml > coverage.xml
 endif
 
-lint: ## Run linters
-	golangci-lint run
-
-#########
-##@ Build
-
-build: ## Build project for current arch
+build: ## Build for current arch
 	GO111MODULE=on $(GOCMD) build -ldflags=$(LDFLAGS) -o ${BINARY}
 
 ###########
