@@ -43,7 +43,7 @@ func ReceivedStdin() bool {
 func ReadStdin() (string, error) {
 	bytes, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return string(bytes), nil
 }

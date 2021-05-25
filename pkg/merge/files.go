@@ -49,7 +49,7 @@ func MergeAllFiles(files []string) (string, error) {
 		var err error
 		contents[i], err = io.ReadAsString(f)
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 	}
 	return MergeAllContents(contents)
@@ -71,7 +71,7 @@ func MergeStdinWithFiles(files []string) (string, error) {
 	for i, f := range files {
 		contents[i+1], err = io.ReadAsString(f)
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 	}
 	return MergeAllContents(contents)
@@ -80,7 +80,7 @@ func MergeStdinWithFiles(files []string) (string, error) {
 func MergeAllFilesToFile(files []string, output string) error {
 	merged, err := MergeAllFiles(files)
 	if err != nil {
-		return nil
+		return err
 	}
 	return io.WriteToFile(output, merged)
 }
