@@ -1,0 +1,12 @@
+app:
+  api:
+    url: http://example.com
+    version: v1
+  cluster:
+    hosts:
+    - http://one.example.com
+    - http://two.example.com
+  description: YAML utils
+  long-description: Common functionality for working with YAML files
+  name: yutil
+  version: 1.0.0

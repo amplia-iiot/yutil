@@ -19,56 +19,53 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package io
+package format
 
 import (
-	"bufio"
-	"fmt"
-	"io"
-	"os"
+	"github.com/amplia-iiot/yutil/internal/io"
 )
 
-func WriteToStdout(content string) error {
-	return Write(os.Stdout, content)
+func FormatFile(file string) (string, error) {
+	content, err := io.ReadAsString(file)
+	if err != nil {
+		return "", err
+	}
+	return FormatContent(content)
 }
 
-func WriteToFile(file string, content string) error {
-	f, err := os.OpenFile(file, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+func FormatFileInPlace(file string) error {
+	formatted, err := FormatFile(file)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	return Write(f, content)
+	return io.WriteToFile(file, formatted)
 }
 
-func Write(file *os.File, content string) error {
-	writer := bufio.NewWriter(file)
-	_, err := writer.WriteString(content)
-	if err != nil {
-		return err
+func FormatFileInPlaceB(file, backupSuffix string) error {
+	if backupSuffix != "" {
+		err := io.Copy(file, file+backupSuffix)
+		if err != nil {
+			return err
+		}
 	}
-	writer.Flush()
+	return FormatFileInPlace(file)
+}
+
+func FormatFilesInPlace(files []string) error {
+	for _, file := range files {
+		err := FormatFileInPlace(file)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
-
-func Copy(src, dst string) error {
-	srcStat, err := os.Stat(src)
-	if err != nil {
-		return err
+func FormatFilesInPlaceB(files []string, backupSuffix string) error {
+	for _, file := range files {
+		err := FormatFileInPlaceB(file, backupSuffix)
+		if err != nil {
+			return err
+		}
 	}
-	if !srcStat.Mode().IsRegular() {
-		return fmt.Errorf("%s is not a regular file", src)
-	}
-	srcFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-	destination, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destination.Close()
-	_, err = io.Copy(destination, srcFile)
-	return err
+	return nil
 }

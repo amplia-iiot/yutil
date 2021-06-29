@@ -150,3 +150,8 @@ func canAccessStdin() bool {
 	noInput, err := rootCmd.Flags().GetBool("no-input")
 	return err == nil && io.ReceivedStdin() && !noInput
 }
+
+func stdinBlocked() bool {
+	noInput, err := rootCmd.Flags().GetBool("no-input")
+	return err == nil && noInput
+}

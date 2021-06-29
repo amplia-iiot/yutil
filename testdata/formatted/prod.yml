@@ -1,0 +1,11 @@
+app:
+  api:
+    url: http://prod.com/service
+    version: v1
+  cluster:
+    hosts:
+    - http://prod.com/service-1
+    - http://prod.com/service-2
+  env:
+    prod: true
+  version: 1.0.0

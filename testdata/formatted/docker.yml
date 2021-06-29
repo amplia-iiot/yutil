@@ -1,0 +1,9 @@
+app:
+  api:
+    url: http://service
+  cluster:
+    hosts:
+    - http://service-1
+    - http://service-2
+  env:
+    docker: true

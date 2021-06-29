@@ -19,56 +19,51 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package io
+package format
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"os"
+	"path"
+	"runtime"
+	"testing"
+
+	"github.com/amplia-iiot/yutil/internal/io"
 )
 
-func WriteToStdout(content string) error {
-	return Write(os.Stdout, content)
+func init() {
+	// Go to root folder to access testdata/
+	_, filename, _, _ := runtime.Caller(0)
+	dir := path.Join(path.Dir(filename), "..", "..")
+	err := os.Chdir(dir)
+	if err != nil {
+		panic(err)
+	}
 }
 
-func WriteToFile(file string, content string) error {
-	f, err := os.OpenFile(file, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
+func TestFormatFiles(t *testing.T) {
+	for _, file := range []string{
+		"base",
+		"dev",
+		"docker",
+		"prod",
+	} {
+		formatted, err := FormatFile(fileToBeFormatted(file))
+		if err != nil {
+			t.Fatal(err)
+		}
+		expectedContent, err := io.ReadAsString(expectedFile(file))
+		if err != nil {
+			t.Fatal(err)
+		}
+		assertEqual(t, expectedContent, formatted)
 	}
-	defer f.Close()
-	return Write(f, content)
 }
 
-func Write(file *os.File, content string) error {
-	writer := bufio.NewWriter(file)
-	_, err := writer.WriteString(content)
-	if err != nil {
-		return err
-	}
-	writer.Flush()
-	return nil
+func expectedFile(file string) string {
+	return fmt.Sprintf("testdata/formatted/%s.yml", file)
 }
 
-func Copy(src, dst string) error {
-	srcStat, err := os.Stat(src)
-	if err != nil {
-		return err
-	}
-	if !srcStat.Mode().IsRegular() {
-		return fmt.Errorf("%s is not a regular file", src)
-	}
-	srcFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-	destination, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destination.Close()
-	_, err = io.Copy(destination, srcFile)
-	return err
+func fileToBeFormatted(file string) string {
+	return fmt.Sprintf("testdata/%s.yml", file)
 }
