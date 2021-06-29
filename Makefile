@@ -42,6 +42,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 	$(GOCMD) install github.com/caarlos0/svu@latest
 	$(GOCMD) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	$(GOCMD) install golang.org/x/tools/cmd/godoc@latest
 
 clean: ## Remove build related files
 	rm -rf ./out ./tmp ./dist
@@ -72,6 +73,10 @@ endif
 
 build: ## Build for current arch
 	GO111MODULE=on $(GOCMD) build -ldflags=$(LDFLAGS) -o ${BINARY}
+
+docs: ## Serve the docs
+	@echo "module docs on http://localhost:6060/pkg/github.com/amplia-iiot/yutil"
+	@godoc -http localhost:6060
 
 ###########
 ##@ Release
