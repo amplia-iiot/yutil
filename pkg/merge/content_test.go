@@ -63,6 +63,17 @@ func TestMergeContents(t *testing.T) {
 			changes:  `data: {simple: two,               array: [{name: three}]}`,
 			expected: `data: {simple: two, extra: extra, array: [{name: three}]}`,
 		},
+		// Primitive values can replace complex values
+		{
+			base:     `data: {one: {two: 2}}`,
+			changes:  `data: {one: 1}`,
+			expected: `data: {one: 1}`,
+		},
+		{
+			base:     `data: {one: [1]}`,
+			changes:  `data: {one: 1}`,
+			expected: `data: {one: 1}`,
+		},
 		// Multiple root estructures
 		{
 			base:     "data: {one: one}                             \ndata3: {value: 1}",
