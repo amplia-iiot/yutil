@@ -26,6 +26,7 @@ import (
 	"github.com/amplia-iiot/yutil/internal/io"
 )
 
+// FormatFile returns the content of a yaml file formatted.
 func FormatFile(file string) (string, error) {
 	content, err := io.ReadAsString(file)
 	if err != nil {
@@ -34,6 +35,7 @@ func FormatFile(file string) (string, error) {
 	return FormatContent(content)
 }
 
+// FormatInPlace formats a yaml file, modifying the original file.
 func FormatFileInPlace(file string) error {
 	formatted, err := FormatFile(file)
 	if err != nil {
@@ -42,6 +44,8 @@ func FormatFileInPlace(file string) error {
 	return io.WriteToFile(file, formatted)
 }
 
+// FormatInPlace formats a yaml file, creating a backup file with a suffix
+// before modifying the original file.
 func FormatFileInPlaceB(file, backupSuffix string) error {
 	if backupSuffix != "" {
 		err := io.Copy(file, file+backupSuffix)
@@ -52,6 +56,8 @@ func FormatFileInPlaceB(file, backupSuffix string) error {
 	return FormatFileInPlace(file)
 }
 
+// FormatFilesInPlace formats a list of yaml files, modifying the original
+// files.
 func FormatFilesInPlace(files []string) error {
 	for _, file := range files {
 		err := FormatFileInPlace(file)
@@ -61,6 +67,9 @@ func FormatFilesInPlace(files []string) error {
 	}
 	return nil
 }
+
+// FormatFilesInPlaceB formats a list of yaml files, creating a backup for each
+// file with a suffix before modifying each file.
 func FormatFilesInPlaceB(files []string, backupSuffix string) error {
 	for _, file := range files {
 		err := FormatFileInPlaceB(file, backupSuffix)
