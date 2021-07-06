@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// Package cmd executes the command line tool.
 package cmd
 
 import (
@@ -59,6 +60,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// BuildInfo contains the build information.
 type BuildInfo struct {
 	Version string
 	Commit  string
@@ -72,6 +74,7 @@ func (b *BuildInfo) format() string {
 
 var buildInfo BuildInfo
 
+// Execute starts the command line tool.
 func Execute(info BuildInfo) {
 	buildInfo = info
 	cobra.CheckErr(rootCmd.Execute())
@@ -122,17 +125,17 @@ func initConfig() {
 	}
 }
 
-// OnViperInitialize sets the passed functions to be run when viper is ready to be configured
+// onViperInitialize sets the passed functions to be run when viper is ready to be configured.
 func onViperInitialize(y ...func()) {
 	viperInitializers = append(viperInitializers, y...)
 }
 
-// Binds a cobra flag with the same viper config key
+// bindViper binds a cobra flag with the same viper config key.
 func bindViper(cmd *cobra.Command, name string) {
 	bindViperC(cmd, name, name)
 }
 
-// Binds a cobra flag with a custom viper config key
+// bindViperC binds a cobra flag with a custom viper config key.
 func bindViperC(cmd *cobra.Command, cobraName string, viperName string) {
 	err := viper.BindEnv(viperName, fmt.Sprintf("%s_%s", envPrefix, strings.ToUpper(strings.ReplaceAll(strings.ReplaceAll(viperName, ".", "_"), "-", "_"))))
 	if err != nil {
@@ -146,7 +149,7 @@ func bindViperC(cmd *cobra.Command, cobraName string, viperName string) {
 	}
 }
 
-// Whether stdin is accessible (received and not blocked with --no-input)
+// canAccessStdin returns whether stdin is accessible (received and not blocked with --no-input)
 func canAccessStdin() bool {
 	noInput, err := rootCmd.Flags().GetBool("no-input")
 	return err == nil && io.ReceivedStdin() && !noInput
