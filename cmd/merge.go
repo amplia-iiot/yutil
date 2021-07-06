@@ -32,11 +32,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type MergeOptions struct {
+type mergeOptions struct {
 	outputFile string
 }
 
-var mergeOptions MergeOptions
+var mOptions mergeOptions
 
 // mergeCmd represents the merge command
 var mergeCmd = &cobra.Command{
@@ -78,8 +78,8 @@ echo "this is not a yaml" | yutil --no-input merge base.yml changes.yml
 		if err != nil {
 			panic(err)
 		}
-		if len(mergeOptions.outputFile) > 0 {
-			err = io.WriteToFile(mergeOptions.outputFile, merged)
+		if len(mOptions.outputFile) > 0 {
+			err = io.WriteToFile(mOptions.outputFile, merged)
 		} else {
 			err = io.WriteToStdout(merged)
 		}
@@ -92,8 +92,8 @@ echo "this is not a yaml" | yutil --no-input merge base.yml changes.yml
 func init() {
 	rootCmd.AddCommand(mergeCmd)
 
-	mergeCmd.Flags().StringVarP(&mergeOptions.outputFile, "output", "o", "", "write merged yaml to output file instead of stdout")
-	OnViperInitialize(func() {
+	mergeCmd.Flags().StringVarP(&mOptions.outputFile, "output", "o", "", "write merged yaml to output file instead of stdout")
+	onViperInitialize(func() {
 		bindViperC(mergeCmd, "output", "merge.output")
 	})
 }

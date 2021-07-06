@@ -31,13 +31,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type FormatOptions struct {
+type formatOptions struct {
 	outputFile string
 	inPlace    bool
 	suffix     string
 }
 
-var formatOptions FormatOptions
+var fOptions formatOptions
 
 // formatCmd represents the format command
 var formatCmd = &cobra.Command{
@@ -58,7 +58,7 @@ echo "this is not a yaml" | yutil --no-input format file.yml > file.formatted.ym
 			if canAccessStdin() {
 				return errors.New("stdin not compatible with in place format")
 			}
-			if formatOptions.outputFile != "" {
+			if fOptions.outputFile != "" {
 				return errors.New("output option not compatible with in place format")
 			}
 		} else {
@@ -84,10 +84,10 @@ echo "this is not a yaml" | yutil --no-input format file.yml > file.formatted.ym
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 		if inPlaceEnabled(cmd) {
-			if formatOptions.suffix == "" {
+			if fOptions.suffix == "" {
 				err = format.FormatFilesInPlace(args)
 			} else {
-				err = format.FormatFilesInPlaceB(args, formatOptions.suffix)
+				err = format.FormatFilesInPlaceB(args, fOptions.suffix)
 			}
 		} else {
 			var formatted string
@@ -99,8 +99,8 @@ echo "this is not a yaml" | yutil --no-input format file.yml > file.formatted.ym
 			if err != nil {
 				panic(err)
 			}
-			if len(formatOptions.outputFile) > 0 {
-				err = io.WriteToFile(formatOptions.outputFile, formatted)
+			if len(fOptions.outputFile) > 0 {
+				err = io.WriteToFile(fOptions.outputFile, formatted)
 			} else {
 				err = io.WriteToStdout(formatted)
 			}
@@ -114,12 +114,12 @@ echo "this is not a yaml" | yutil --no-input format file.yml > file.formatted.ym
 func init() {
 	rootCmd.AddCommand(formatCmd)
 
-	formatCmd.Flags().StringVarP(&formatOptions.outputFile, "output", "o", "", "format yaml to output file instead of stdout (not compatible in place format)")
-	formatCmd.Flags().BoolVarP(&formatOptions.inPlace, "in-place", "i", false, "format yaml files in place (makes backup if suffix is supplied)")
-	formatCmd.Flags().StringVarP(&formatOptions.suffix, "suffix", "s", "", "format yaml files in place making a backup with the given suffix (-i is not necessary if suffix is passed)")
+	formatCmd.Flags().StringVarP(&fOptions.outputFile, "output", "o", "", "format yaml to output file instead of stdout (not compatible in place format)")
+	formatCmd.Flags().BoolVarP(&fOptions.inPlace, "in-place", "i", false, "format yaml files in place (makes backup if suffix is supplied)")
+	formatCmd.Flags().StringVarP(&fOptions.suffix, "suffix", "s", "", "format yaml files in place making a backup with the given suffix (-i is not necessary if suffix is passed)")
 }
 
 // Whether in place format is enabled
 func inPlaceEnabled(cmd *cobra.Command) bool {
-	return formatOptions.inPlace || cmd.Flags().Changed("suffix")
+	return fOptions.inPlace || cmd.Flags().Changed("suffix")
 }

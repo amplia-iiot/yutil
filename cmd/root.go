@@ -83,7 +83,7 @@ func init() {
 	rootCmd.Flags().BoolVarP(&version, "version", "v", false, "show the yutil version in short format")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./.yutil or $HOME/.yutil)")
 	rootCmd.PersistentFlags().Bool("no-input", false, "ignore stdin input (by default stdin is read as yaml content)")
-	OnViperInitialize(func() {
+	onViperInitialize(func() {
 		bindViper(rootCmd, "no-input")
 	})
 }
@@ -123,7 +123,7 @@ func initConfig() {
 }
 
 // OnViperInitialize sets the passed functions to be run when viper is ready to be configured
-func OnViperInitialize(y ...func()) {
+func onViperInitialize(y ...func()) {
 	viperInitializers = append(viperInitializers, y...)
 }
 
