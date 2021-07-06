@@ -28,6 +28,9 @@ import (
 	"github.com/amplia-iiot/yutil/internal/yaml"
 )
 
+// MergeContents returns the result of merging two yaml contents. A yaml leaf
+// node in the 'changes' content takes precedence over and replaces the value in
+// the 'base' content.
 func MergeContents(base string, changes string) (string, error) {
 	baseData, err := yaml.Parse(base)
 	if err != nil {
@@ -44,6 +47,10 @@ func MergeContents(base string, changes string) (string, error) {
 	return yaml.Compose(mergedData)
 }
 
+// MergeAllContents returns the result of merging all yaml contents, which should
+// be ordered in ascending level of importance in the hierarchy. A yaml leaf node
+// in the last content takes precedence over and replaces the value in any
+// previous content.
 func MergeAllContents(contents []string) (string, error) {
 	if len(contents) < 2 {
 		return "", errors.New("slice must contain at least two contents")

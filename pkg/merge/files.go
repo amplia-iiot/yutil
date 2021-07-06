@@ -28,6 +28,9 @@ import (
 	"github.com/amplia-iiot/yutil/internal/io"
 )
 
+// MergeFiles returns the result of merging two yaml files. A yaml leaf node in
+// the 'changes' file takes precedence over and replaces the value in the 'base'
+// file.
 func MergeFiles(base string, changes string) (string, error) {
 	baseContent, err := io.ReadAsString(base)
 	if err != nil {
@@ -40,6 +43,10 @@ func MergeFiles(base string, changes string) (string, error) {
 	return MergeContents(baseContent, changesContent)
 }
 
+// MergeAllFiles returns the result of merging all yaml files, which should be
+// ordered in ascending level of importance in the hierarchy. A yaml leaf node in
+// the last file takes precedence over and replaces the value in any previous
+// file.
 func MergeAllFiles(files []string) (string, error) {
 	if len(files) < 2 {
 		return "", errors.New("slice must contain at least two files")
@@ -56,6 +63,11 @@ func MergeAllFiles(files []string) (string, error) {
 	return MergeAllContents(contents)
 }
 
+// MergeStdinWithFiles returns the result of merging stdin as yaml content with
+// all yaml files, which should be ordered in ascending level of importance in
+// the hierarchy. Stdin is the least important yaml. A yaml leaf node in the last
+// file takes precedence over and replaces the value in any previous file,
+// including values in stdin.
 func MergeStdinWithFiles(files []string) (string, error) {
 	if len(files) < 1 {
 		return "", errors.New("slice must contain at least one files")
@@ -78,6 +90,10 @@ func MergeStdinWithFiles(files []string) (string, error) {
 	return MergeAllContents(contents)
 }
 
+// MergeAllFilesToFile writes to an output file the result of merging all yaml
+// files, which should be ordered in ascending level of importance in the
+// hierarchy. A yaml leaf node in the last file takes precedence over and
+// replaces the value in any previous file.
 func MergeAllFilesToFile(files []string, output string) error {
 	merged, err := MergeAllFiles(files)
 	if err != nil {
