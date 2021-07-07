@@ -21,6 +21,7 @@ Common functionality for working with YAML files
 			- [Go users](#go-users)
 		- [Test installation](#test-installation)
 		- [Quick Start](#quick-start)
+			- [Format](#format)
 			- [Merge](#merge)
 			- [External configuration](#external-configuration)
 	- [Development](#development)
@@ -64,6 +65,59 @@ yutil version
 yutil help
 ```
 
+#### Format
+
+This outputs a formatted _YAML_ file or files. That includes sorting its nodes alphabetically and cleaning the format of the values:
+- _Strings_ that do not need quotes to remain a primitive string lose the quotes. When quotes are needed, **single quotes** are preferred for strings with special characters. For strings containing a _number_, _boolean_ or _null_ values, **double quotes** are used. Unicode escape sequences in a string are replaced with the character.
+- The proper formatting for _null_ is `null`, not `Null`. The same happens to _boolean_ values, **lowercase** is used when formatting.
+- _Arrays_ maintain the order of elements, and each element appears on a new line.
+- Comments are removed.
+
+> Check the [tests](./pkg/format/content_test.go) for examples.
+
+To see and format the content of a _YAML_ file use:
+
+```bash
+yutil format file.yml
+```
+
+Use `-o` (`--output`) option if you want to output to a file instead of _stdout_.
+
+```bash
+yutil format file.yml -o file.formatted.yml
+```
+
+By default `yutil` uses _stdin_ as _YAML_ content if available:
+
+```bash
+cat file.yml | yutil format > file.formatted.yml
+```
+
+You may ignore this input (`--no-input`) if you can't control what's piped to `yutil`:
+
+```bash
+echo "this is not a yaml" | yutil --no-input format file.yml > file.formatted.yml
+```
+
+If you want to format a _YAML_ file and store the result in the same file use in-place formatting with `-i` (`--in-place`). You may pass as many _YAML_ files as desired:
+
+```bash
+yutil -i file.yml
+yutil -i file1.yml file2.yml file3.yml
+```
+
+Use `-s` (`--suffix`) to make a backup before formatting the file/s:
+
+```bash
+yutil -s .bak file1.yml file2.yml file3.yml
+```
+
+This will make a copy the files (`file1.yml.bak`, `file2.yml.bak` and `file3.yml.bak`) and save the formatted _YAML_ in the original files.
+
+> When using `-s`, in-place formatting is implicit and there's no need to also use `-i`.
+
+In-place formatting does not allow for _stdin_ to be used as input, if something is piped to `yutil` an error will be displayed. Use `--no-input` to ignore _stdin_ input.
+
 #### Merge
 
 This outputs a formatted (ordered and cleaned) _YAML_ file resulting of merging the passed yaml files (or content).
@@ -76,7 +130,7 @@ yutil merge base.yml changes.yml
 yutil merge base.yml changes.yml important.yml
 ```
 
-Use `-o` (`--output`) option if you want to output to a file instead of stdout.
+Use `-o` (`--output`) option if you want to output to a file instead of _stdout_.
 
 ```bash
 yutil merge base.yml changes.yml -o merged.yml
@@ -88,7 +142,7 @@ By default `yutil` uses _stdin_ as the first _YAML_ content:
 cat base.yml | yutil merge changes.yml > merged.yml
 ```
 
-You may ignore this input if you can't control what's piped to `yutil`:
+You may ignore this input (`--no-input`) if you can't control what's piped to `yutil`:
 
 ```bash
 echo "this is not a yaml" | yutil --no-input merge base.yml changes.yml
