@@ -23,7 +23,9 @@ SOFTWARE.
 package merge
 
 import (
+	"errors"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/amplia-iiot/yutil/internal/yaml"
@@ -89,6 +91,85 @@ func TestMergeContents(t *testing.T) {
 	}
 }
 
+func TestMergeContentsInvalid(t *testing.T) {
+	for _, i := range []struct {
+		base     string
+		changes  string
+		expected string
+	}{
+		{
+			base:     `;`,
+			changes:  `data: 2`,
+			expected: `cannot unmarshal`,
+		},
+		{
+			base:     `data: 1`,
+			changes:  `;`,
+			expected: `cannot unmarshal`,
+		},
+	} {
+		merged, err := MergeContents(i.base, i.changes)
+		assertError(t, i.expected, err)
+		if merged != "" {
+			t.Fatalf("Should not have merged")
+		}
+	}
+}
+
+func TestMergeContentsMergeError(t *testing.T) {
+	// Mock merge internal function
+	originalMerge := yaml.Merge
+	defer func() { yaml.Merge = originalMerge }()
+	yaml.Merge = func(base, changes map[string]interface{}) (map[string]interface{}, error) {
+		return nil, errors.New("merging error")
+	}
+	merged, err := MergeContents("", "")
+	assertError(t, "merging error", err)
+	if merged != "" {
+		t.Fatalf("Should not have merged")
+	}
+}
+
+func TestMergeAllContentsInvalid(t *testing.T) {
+	for _, i := range []struct {
+		contents []string
+		expected string
+	}{
+		// At least two
+		{
+			contents: make([]string, 0),
+			expected: `slice must contain at least two contents`,
+		},
+		{
+			contents: make([]string, 1),
+			expected: `slice must contain at least two contents`,
+		},
+		// Parsing error
+		{
+			contents: []string{
+				"data: 1",
+				"data: 2",
+				";",
+			},
+			expected: `cannot unmarshal`,
+		},
+		{
+			contents: []string{
+				";",
+				"data: 2",
+				"data: 3",
+			},
+			expected: `cannot unmarshal`,
+		},
+	} {
+		merged, err := MergeAllContents(i.contents)
+		assertError(t, i.expected, err)
+		if merged != "" {
+			t.Fatalf("Should not have merged")
+		}
+	}
+}
+
 func format(content string) (string, error) {
 	data, err := yaml.Parse(content)
 	if err != nil {
@@ -106,9 +187,17 @@ func assert(t *testing.T, expected string, got string) {
 }
 
 func assertEqual(t *testing.T, expected interface{}, got interface{}) {
-	// fmt.Printf("comparing %s with %s", expected, got)
 	if expected == got {
 		return
 	}
 	t.Errorf("Received %v (type %v), expected %v (type %v)", got, reflect.TypeOf(got), expected, reflect.TypeOf(expected))
+}
+
+func assertError(t *testing.T, expected string, got error) {
+	if got == nil && expected != "" {
+		t.Fatalf("Error expected and not triggered")
+	}
+	if expected != "" && !strings.Contains(got.Error(), expected) {
+		t.Fatalf("Error '%s' does not contain '%s'", got, expected)
+	}
 }
