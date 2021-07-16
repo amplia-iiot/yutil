@@ -58,7 +58,11 @@ lint: ## Run linters
 	golangci-lint run
 
 check: ## Check the source code (test & lint)
+ifeq ($(INCLUDE_COVERAGE), true)
+	( ( (EXPORT_RESULT=true $(MAKE) -s coverage) && printf '${GREEN}Tests - OK${RESET}\n' ) || printf '${RED}Tests - failed${RESET}\n' )
+else
 	( ( ($(MAKE) -s test) && printf '${GREEN}Tests - OK${RESET}\n' ) || printf '${RED}Tests - failed${RESET}\n' )
+endif
 	( ( ($(MAKE) -s lint) && printf '${GREEN}Lint  - OK${RESET}\n' ) || printf '${RED}Lint  - failed${RESET}\n' )
 
 watch: ## Run check when a change is detected
