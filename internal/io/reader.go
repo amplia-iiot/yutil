@@ -27,21 +27,21 @@ import (
 	"os"
 )
 
-func Read(file string) ([]byte, error) {
+var Read = func(file string) ([]byte, error) {
 	return ioutil.ReadFile(file)
 }
 
-func ReadAsString(file string) (string, error) {
+var ReadAsString = func(file string) (string, error) {
 	buf, err := Read(file)
 	return string(buf), err
 }
 
-func ReceivedStdin() bool {
+var ReceivedStdin = func() bool {
 	stat, err := os.Stdin.Stat()
 	return err != nil || (stat.Mode()&os.ModeCharDevice) == 0
 }
 
-func ReadStdin() (string, error) {
+var ReadStdin = func() (string, error) {
 	bytes, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		return "", err
@@ -49,7 +49,7 @@ func ReadStdin() (string, error) {
 	return string(bytes), nil
 }
 
-func Exists(file string) bool {
+var Exists = func(file string) bool {
 	_, err := os.Stat(file)
 	return err == nil || !os.IsNotExist(err)
 }

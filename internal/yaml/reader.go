@@ -27,7 +27,7 @@ import (
 	yaml2 "gopkg.in/yaml.v2"
 )
 
-func Parse(content string) (map[string]interface{}, error) {
+var Parse = func(content string) (map[string]interface{}, error) {
 	m := make(map[string]interface{})
 	if err := yaml2.Unmarshal([]byte(content), &m); err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func Parse(content string) (map[string]interface{}, error) {
 	return m, nil
 }
 
-func Unmarshal(content []byte) (map[string]interface{}, error) {
+var Unmarshal = func(content []byte) (map[string]interface{}, error) {
 	m := make(map[string]interface{})
 	if err := yaml.Unmarshal(content, &m); err != nil {
 		return nil, err

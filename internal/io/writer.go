@@ -29,11 +29,11 @@ import (
 	"os"
 )
 
-func WriteToStdout(content string) error {
+var WriteToStdout = func(content string) error {
 	return Write(os.Stdout, content)
 }
 
-func WriteToFile(file string, content string) error {
+var WriteToFile = func(file string, content string) error {
 	f, err := os.OpenFile(file, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func WriteToFile(file string, content string) error {
 	return Write(f, content)
 }
 
-func Write(file *os.File, content string) error {
+var Write = func(file *os.File, content string) error {
 	writer := bufio.NewWriter(file)
 	_, err := writer.WriteString(content)
 	if err != nil {
@@ -52,7 +52,7 @@ func Write(file *os.File, content string) error {
 	return nil
 }
 
-func Copy(src, dst string) error {
+var Copy = func(src, dst string) error {
 	srcStat, err := os.Stat(src)
 	if err != nil {
 		return err

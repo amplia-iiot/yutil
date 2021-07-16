@@ -26,7 +26,7 @@ import (
 	yaml2 "gopkg.in/yaml.v2"
 )
 
-func Compose(data map[string]interface{}) (string, error) {
+var Compose = func(data map[string]interface{}) (string, error) {
 	buf, err := Marshal(data)
 	if err != nil {
 		return "", err
@@ -34,7 +34,7 @@ func Compose(data map[string]interface{}) (string, error) {
 	return string(buf), nil
 }
 
-func Marshal(data map[string]interface{}) ([]byte, error) {
+var Marshal = func(data map[string]interface{}) ([]byte, error) {
 	buf, err := yaml2.Marshal(&data)
 	if err != nil {
 		return nil, err
