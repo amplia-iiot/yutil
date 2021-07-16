@@ -70,7 +70,7 @@ func MergeAllFiles(files []string) (string, error) {
 // including values in stdin.
 func MergeStdinWithFiles(files []string) (string, error) {
 	if len(files) < 1 {
-		return "", errors.New("slice must contain at least one files")
+		return "", errors.New("slice must contain at least one file")
 	}
 	var err error
 
