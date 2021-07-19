@@ -42,9 +42,11 @@ func init() {
 		panic(err)
 	}
 	// Create tmp folder
-	err = os.Mkdir("tmp", 0700)
-	if err != nil {
-		panic(err)
+	if !io.Exists("tmp") {
+		err = os.Mkdir("tmp", 0700)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
