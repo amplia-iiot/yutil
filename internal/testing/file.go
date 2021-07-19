@@ -20,48 +20,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package format
+package testing
 
 import (
-	"fmt"
 	"os"
-	"path"
-	"runtime"
 	"testing"
 
-	itesting "github.com/amplia-iiot/yutil/internal/testing"
+	"github.com/amplia-iiot/yutil/internal/io"
 )
 
-func init() {
-	// Go to root folder to access testdata/
-	_, filename, _, _ := runtime.Caller(0)
-	dir := path.Join(path.Dir(filename), "..", "..")
-	err := os.Chdir(dir)
+func TempFilePath(t *testing.T, pattern string) string {
+	tmp, err := os.CreateTemp("tmp", pattern)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
+	defer os.Remove(tmp.Name())
+	return tmp.Name()
 }
 
-func TestFormatFiles(t *testing.T) {
-	for _, file := range []string{
-		"base",
-		"dev",
-		"docker",
-		"prod",
-	} {
-		formatted, err := FormatFile(fileToBeFormatted(file))
-		if err != nil {
-			t.Fatal(err)
-		}
-		expectedContent := itesting.ReadFile(t, expectedFile(file))
-		itesting.AssertEqual(t, expectedContent, formatted)
+func ReadFile(t *testing.T, file string) string {
+	content, err := io.ReadAsString(file)
+	if err != nil {
+		t.Fatal(err)
 	}
-}
-
-func expectedFile(file string) string {
-	return fmt.Sprintf("testdata/formatted/%s.yml", file)
-}
-
-func fileToBeFormatted(file string) string {
-	return fmt.Sprintf("testdata/%s.yml", file)
+	return content
 }

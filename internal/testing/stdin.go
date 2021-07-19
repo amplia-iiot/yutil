@@ -20,48 +20,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package format
+package testing
 
 import (
-	"fmt"
 	"os"
-	"path"
-	"runtime"
 	"testing"
-
-	itesting "github.com/amplia-iiot/yutil/internal/testing"
 )
 
-func init() {
-	// Go to root folder to access testdata/
-	_, filename, _, _ := runtime.Caller(0)
-	dir := path.Join(path.Dir(filename), "..", "..")
-	err := os.Chdir(dir)
+func SimulateStdinContent(t *testing.T, stdin string, function func()) {
+	// Create temporal file
+	tmp, err := os.CreateTemp("tmp", "stdin-*.yml")
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
-}
+	// Clean up on exit
+	defer os.Remove(tmp.Name())
 
-func TestFormatFiles(t *testing.T) {
-	for _, file := range []string{
-		"base",
-		"dev",
-		"docker",
-		"prod",
-	} {
-		formatted, err := FormatFile(fileToBeFormatted(file))
-		if err != nil {
-			t.Fatal(err)
-		}
-		expectedContent := itesting.ReadFile(t, expectedFile(file))
-		itesting.AssertEqual(t, expectedContent, formatted)
+	// Write custom content
+	if _, err := tmp.Write([]byte(stdin)); err != nil {
+		t.Fatal(err)
 	}
+
+	// Reset offset for next read
+	if _, err := tmp.Seek(0, 0); err != nil {
+		t.Fatal(err)
+	}
+
+	SimulateStdinFile(*tmp, function)
 }
 
-func expectedFile(file string) string {
-	return fmt.Sprintf("testdata/formatted/%s.yml", file)
-}
+func SimulateStdinFile(stdin os.File, function func()) {
+	originalStdin := os.Stdin
+	defer func() { os.Stdin = originalStdin }()
 
-func fileToBeFormatted(file string) string {
-	return fmt.Sprintf("testdata/%s.yml", file)
+	os.Stdin = &stdin
+
+	// Execute function that uses stdin
+	function()
 }

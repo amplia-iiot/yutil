@@ -23,8 +23,9 @@ SOFTWARE.
 package format
 
 import (
-	"reflect"
 	"testing"
+
+	itesting "github.com/amplia-iiot/yutil/internal/testing"
 )
 
 func TestFormatContent(t *testing.T) {
@@ -293,13 +294,6 @@ func TestFormatContent(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assertEqual(t, i.expected, formatted)
+		itesting.AssertEqual(t, i.expected, formatted)
 	}
-}
-
-func assertEqual(t *testing.T, expected interface{}, got interface{}) {
-	if expected == got {
-		return
-	}
-	t.Errorf("Received %v (type %v), expected %v (type %v)", got, reflect.TypeOf(got), expected, reflect.TypeOf(expected))
 }

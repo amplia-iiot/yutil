@@ -24,10 +24,9 @@ package merge
 
 import (
 	"errors"
-	"reflect"
-	"strings"
 	"testing"
 
+	itesting "github.com/amplia-iiot/yutil/internal/testing"
 	"github.com/amplia-iiot/yutil/internal/yaml"
 )
 
@@ -87,7 +86,7 @@ func TestMergeContents(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert(t, i.expected, merged)
+		itesting.AssertEqual(t, format(t, i.expected), merged)
 	}
 }
 
@@ -109,7 +108,7 @@ func TestMergeContentsInvalid(t *testing.T) {
 		},
 	} {
 		merged, err := MergeContents(i.base, i.changes)
-		assertError(t, i.expected, err)
+		itesting.AssertError(t, i.expected, err)
 		if merged != "" {
 			t.Fatalf("Should not have merged")
 		}
@@ -124,7 +123,7 @@ func TestMergeContentsMergeError(t *testing.T) {
 		return nil, errors.New("merging error")
 	}
 	merged, err := MergeContents("", "")
-	assertError(t, "merging error", err)
+	itesting.AssertError(t, "merging error", err)
 	if merged != "" {
 		t.Fatalf("Should not have merged")
 	}
@@ -163,41 +162,22 @@ func TestMergeAllContentsInvalid(t *testing.T) {
 		},
 	} {
 		merged, err := MergeAllContents(i.contents)
-		assertError(t, i.expected, err)
+		itesting.AssertError(t, i.expected, err)
 		if merged != "" {
 			t.Fatalf("Should not have merged")
 		}
 	}
 }
 
-func format(content string) (string, error) {
+func format(t *testing.T, content string) string {
 	data, err := yaml.Parse(content)
 	if err != nil {
-		return "", err
+		t.Fatalf("Error formatting '%s'. %s", content, err)
 	}
-	return yaml.Compose(data)
-}
-
-func assert(t *testing.T, expected string, got string) {
-	expected, err := format(expected)
+	var formatted string
+	formatted, err = yaml.Compose(data)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Error formatting '%s'. %s", content, err)
 	}
-	assertEqual(t, expected, got)
-}
-
-func assertEqual(t *testing.T, expected interface{}, got interface{}) {
-	if expected == got {
-		return
-	}
-	t.Errorf("Received %v (type %v), expected %v (type %v)", got, reflect.TypeOf(got), expected, reflect.TypeOf(expected))
-}
-
-func assertError(t *testing.T, expected string, got error) {
-	if got == nil && expected != "" {
-		t.Fatalf("Error expected and not triggered")
-	}
-	if expected != "" && !strings.Contains(got.Error(), expected) {
-		t.Fatalf("Error '%s' does not contain '%s'", got, expected)
-	}
+	return formatted
 }

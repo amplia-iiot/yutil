@@ -20,48 +20,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package format
+package testing
 
 import (
-	"fmt"
-	"os"
-	"path"
-	"runtime"
+	"reflect"
+	"strings"
 	"testing"
-
-	itesting "github.com/amplia-iiot/yutil/internal/testing"
 )
 
-func init() {
-	// Go to root folder to access testdata/
-	_, filename, _, _ := runtime.Caller(0)
-	dir := path.Join(path.Dir(filename), "..", "..")
-	err := os.Chdir(dir)
-	if err != nil {
-		panic(err)
+func AssertEqual(t *testing.T, expected interface{}, got interface{}) {
+	if expected == got {
+		return
 	}
+	t.Fatalf("Received %v (type %v), expected %v (type %v)", got, reflect.TypeOf(got), expected, reflect.TypeOf(expected))
 }
 
-func TestFormatFiles(t *testing.T) {
-	for _, file := range []string{
-		"base",
-		"dev",
-		"docker",
-		"prod",
-	} {
-		formatted, err := FormatFile(fileToBeFormatted(file))
-		if err != nil {
-			t.Fatal(err)
-		}
-		expectedContent := itesting.ReadFile(t, expectedFile(file))
-		itesting.AssertEqual(t, expectedContent, formatted)
+func AssertError(t *testing.T, expected string, got error) {
+	if got == nil && expected != "" {
+		t.Fatalf("Error expected and not triggered")
 	}
-}
-
-func expectedFile(file string) string {
-	return fmt.Sprintf("testdata/formatted/%s.yml", file)
-}
-
-func fileToBeFormatted(file string) string {
-	return fmt.Sprintf("testdata/%s.yml", file)
+	if expected != "" && !strings.Contains(got.Error(), expected) {
+		t.Fatalf("Error '%s' does not contain '%s'", got, expected)
+	}
 }

@@ -31,6 +31,7 @@ import (
 	"testing"
 
 	"github.com/amplia-iiot/yutil/internal/io"
+	itesting "github.com/amplia-iiot/yutil/internal/testing"
 )
 
 func init() {
@@ -62,11 +63,8 @@ func TestMergeFiles(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		expectedContent, err := io.ReadAsString(expectedFile([]string{i.base, i.changes}))
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert(t, expectedContent, merged)
+		expectedContent := itesting.ReadFile(t, expectedFile([]string{i.base, i.changes}))
+		itesting.AssertEqual(t, format(t, expectedContent), merged)
 	}
 }
 
@@ -81,11 +79,8 @@ func TestMergeAllFiles(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		expectedContent, err := io.ReadAsString(expectedFile(files))
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert(t, expectedContent, merged)
+		expectedContent := itesting.ReadFile(t, expectedFile(files))
+		itesting.AssertEqual(t, format(t, expectedContent), merged)
 	}
 }
 
@@ -119,7 +114,7 @@ func TestMergeFilesInvalid(t *testing.T) {
 		},
 	} {
 		merged, err := MergeFiles(fileToBeMerged(i.base), fileToBeMerged(i.changes))
-		assertError(t, i.expected, err)
+		itesting.AssertError(t, i.expected, err)
 		if merged != "" {
 			t.Fatalf("Should not have merged")
 		}
@@ -168,7 +163,7 @@ func TestMergeAllFilesInvalid(t *testing.T) {
 		},
 	} {
 		merged, err := MergeAllFiles(filesToBeMerged(i.files))
-		assertError(t, i.expected, err)
+		itesting.AssertError(t, i.expected, err)
 		if merged != "" {
 			t.Fatalf("Should not have merged")
 		}
@@ -243,12 +238,12 @@ extra: extra
 `,
 		},
 	} {
-		simulateStdinContent(t, i.stdin, func() {
+		itesting.SimulateStdinContent(t, i.stdin, func() {
 			merged, err := MergeStdinWithFiles(filesToBeMerged(i.files))
 			if err != nil {
 				t.Fatal(err)
 			}
-			assertEqual(t, i.expected, merged)
+			itesting.AssertEqual(t, i.expected, merged)
 		})
 	}
 }
@@ -287,15 +282,15 @@ func TestMergeStdinWithFilesInvalid(t *testing.T) {
 	} {
 		test := func() {
 			merged, err := MergeStdinWithFiles(filesToBeMerged(i.files))
-			assertError(t, i.expected, err)
+			itesting.AssertError(t, i.expected, err)
 			if merged != "" {
 				t.Fatalf("Should not have merged")
 			}
 		}
 		if i.stdin != "" {
-			simulateStdinContent(t, i.stdin, test)
+			itesting.SimulateStdinContent(t, i.stdin, test)
 		} else {
-			simulateStdinFile(i.stdinFile, test)
+			itesting.SimulateStdinFile(i.stdinFile, test)
 		}
 	}
 }
@@ -307,24 +302,15 @@ func TestMergeAllFilesToFile(t *testing.T) {
 		{"base", "dev", "docker"},
 		{"base", "prod", "docker"},
 	} {
-		tmpPath, err := tempFilePath("merged-*.yml")
+		tmpPath := itesting.TempFilePath(t, "merged-*.yml")
 		defer os.Remove(tmpPath)
+		err := MergeAllFilesToFile(filesToBeMerged(files), tmpPath)
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = MergeAllFilesToFile(filesToBeMerged(files), tmpPath)
-		if err != nil {
-			t.Fatal(err)
-		}
-		expectedContent, err := io.ReadAsString(expectedFile(files))
-		if err != nil {
-			t.Fatal(err)
-		}
-		mergedContent, err := io.ReadAsString(tmpPath)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert(t, expectedContent, mergedContent)
+		expectedContent := itesting.ReadFile(t, expectedFile(files))
+		mergedContent := itesting.ReadFile(t, tmpPath)
+		itesting.AssertEqual(t, format(t, expectedContent), mergedContent)
 	}
 }
 
@@ -353,13 +339,10 @@ func TestMergeAllFilesToFileInvalid(t *testing.T) {
 			expected: "no such file or directory",
 		},
 	} {
-		tmpPath, err := tempFilePath("merged-*.yml")
+		tmpPath := itesting.TempFilePath(t, "merged-*.yml")
 		defer os.Remove(tmpPath)
-		if err != nil {
-			t.Fatal(err)
-		}
-		err = MergeAllFilesToFile(filesToBeMerged(i.files), tmpPath)
-		assertError(t, i.expected, err)
+		err := MergeAllFilesToFile(filesToBeMerged(i.files), tmpPath)
+		itesting.AssertError(t, i.expected, err)
 		if io.Exists(tmpPath) {
 			t.Fatalf("Should not have merged")
 		}
@@ -381,45 +364,4 @@ func filesToBeMerged(files []string) []string {
 		completeFiles[i] = fileToBeMerged(file)
 	}
 	return completeFiles
-}
-
-func tempFilePath(pattern string) (string, error) {
-	tmp, err := os.CreateTemp("tmp", pattern)
-	if err != nil {
-		return "", err
-	}
-	defer os.Remove(tmp.Name())
-	return tmp.Name(), nil
-}
-
-func simulateStdinContent(t *testing.T, stdin string, function func()) {
-	// Create temporal file
-	tmp, err := os.CreateTemp("tmp", "stdin-*.yml")
-	if err != nil {
-		t.Fatal(err)
-	}
-	// Clean up on exit
-	defer os.Remove(tmp.Name())
-
-	// Write custom content
-	if _, err := tmp.Write([]byte(stdin)); err != nil {
-		t.Fatal(err)
-	}
-
-	// Reset offset for next read
-	if _, err := tmp.Seek(0, 0); err != nil {
-		t.Fatal(err)
-	}
-
-	simulateStdinFile(*tmp, function)
-}
-
-func simulateStdinFile(stdin os.File, function func()) {
-	originalStdin := os.Stdin
-	defer func() { os.Stdin = originalStdin }()
-
-	os.Stdin = &stdin
-
-	// Execute function that uses stdin
-	function()
 }
