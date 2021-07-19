@@ -28,6 +28,7 @@ import (
 	"testing"
 )
 
+// AssertEqual fails if expected and got are not equal.
 func AssertEqual(t *testing.T, expected interface{}, got interface{}) {
 	if expected == got {
 		return
@@ -35,6 +36,8 @@ func AssertEqual(t *testing.T, expected interface{}, got interface{}) {
 	t.Fatalf("Received %v (type %v), expected %v (type %v)", got, reflect.TypeOf(got), expected, reflect.TypeOf(expected))
 }
 
+// AssertError fails if an error is expected and does not contain the expected
+// string.
 func AssertError(t *testing.T, expected string, got error) {
 	if got == nil && expected != "" {
 		t.Fatalf("Error expected and not triggered")

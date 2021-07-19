@@ -20,31 +20,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// Package testing provides common functions to be used while testing.
 package testing
-
-import (
-	"os"
-	"testing"
-
-	"github.com/amplia-iiot/yutil/internal/io"
-)
-
-// TempFilePath return a temp file path for the given filename pattern for a file
-// that does not exist. Fails on error.
-func TempFilePath(t *testing.T, pattern string) string {
-	tmp, err := os.CreateTemp("tmp", pattern)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.Remove(tmp.Name())
-	return tmp.Name()
-}
-
-// ReadFile returns the content of a file. Fails on error.
-func ReadFile(t *testing.T, file string) string {
-	content, err := io.ReadAsString(file)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return content
-}

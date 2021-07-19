@@ -27,6 +27,8 @@ import (
 	"testing"
 )
 
+// SimulateStdinContent executes a function that reads stdin simulating the
+// content. Fails on error.
 func SimulateStdinContent(t *testing.T, stdin string, function func()) {
 	// Create temporal file
 	tmp, err := os.CreateTemp("tmp", "stdin-*.yml")
@@ -49,6 +51,8 @@ func SimulateStdinContent(t *testing.T, stdin string, function func()) {
 	SimulateStdinFile(*tmp, function)
 }
 
+// SimulateStdinFile executes a function that reads stdin using another file as
+// simulated stdin. Fails on error.
 func SimulateStdinFile(stdin os.File, function func()) {
 	originalStdin := os.Stdin
 	defer func() { os.Stdin = originalStdin }()
