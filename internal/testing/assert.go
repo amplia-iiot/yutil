@@ -46,3 +46,17 @@ func AssertError(t *testing.T, expected string, got error) {
 		t.Fatalf("Error '%s' does not contain '%s'", got, expected)
 	}
 }
+
+// AssertTrue fails if a false is passed.
+func AssertTrue(t *testing.T, got bool) {
+	if !got {
+		t.Fatal("True expected")
+	}
+}
+
+// AssertFalse fails if a true is passed.
+func AssertFalse(t *testing.T, got bool) {
+	if got {
+		t.Fatal("False expected")
+	}
+}

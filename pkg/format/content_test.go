@@ -23,6 +23,7 @@ SOFTWARE.
 package format
 
 import (
+	"os"
 	"testing"
 
 	itesting "github.com/amplia-iiot/yutil/internal/testing"
@@ -295,5 +296,113 @@ func TestFormatContent(t *testing.T) {
 			t.Fatal(err)
 		}
 		itesting.AssertEqual(t, i.expected, formatted)
+	}
+}
+
+func TestFormatContentInvalid(t *testing.T) {
+	for _, i := range []struct {
+		content  string
+		expected string
+	}{
+		{
+			content:  `;`,
+			expected: "cannot unmarshal",
+		},
+		{
+			content:  `data: {`,
+			expected: "did not find expected node content",
+		},
+	} {
+		formatted, err := FormatContent(i.content)
+		itesting.AssertError(t, i.expected, err)
+		if formatted != "" {
+			t.Errorf("Should not have formatted")
+		}
+	}
+}
+
+func TestStdinContent(t *testing.T) {
+	for _, i := range []struct {
+		stdin    string
+		expected string
+	}{
+		// Formatted to multiple lines
+		{
+			stdin: `data: {one: 1, two: 2}`,
+			expected: `data:
+  one: 1
+  two: 2
+`,
+		},
+		// Keys are alphabetically ordered
+		{
+			stdin: `data: {b: b, c: c, a: a}`,
+			expected: `data:
+  a: a
+  b: b
+  c: c
+`,
+		},
+		// Null should be formatted `null`
+		{
+			stdin: `data:`,
+			expected: `data: null
+`,
+		},
+		// String do not have quotes
+		{
+			stdin: `data: "one"`,
+			expected: `data: one
+`,
+		},
+		{
+			stdin: `data: 'this is a string'`,
+			expected: `data: this is a string
+`,
+		},
+	} {
+		itesting.SimulateStdinContent(t, i.stdin, func() {
+			formatted, err := FormatStdin()
+			if err != nil {
+				t.Error(err)
+			}
+			itesting.AssertEqual(t, i.expected, formatted)
+		})
+	}
+}
+
+func TestFormatstdinInvalid(t *testing.T) {
+	for _, i := range []struct {
+		stdin     string
+		stdinFile os.File
+		expected  string
+	}{
+		// Parsing error
+		{
+			stdin:    `;`,
+			expected: "cannot unmarshal",
+		},
+		{
+			stdin:    `data: {`,
+			expected: "did not find expected node content",
+		},
+		// Stdin error
+		{
+			stdinFile: *os.Stderr,
+			expected:  "bad file descriptor",
+		},
+	} {
+		test := func() {
+			formatted, err := FormatStdin()
+			itesting.AssertError(t, i.expected, err)
+			if formatted != "" {
+				t.Errorf("Should not have formatted")
+			}
+		}
+		if i.stdin != "" {
+			itesting.SimulateStdinContent(t, i.stdin, test)
+		} else {
+			itesting.SimulateStdinFile(i.stdinFile, test)
+		}
 	}
 }
