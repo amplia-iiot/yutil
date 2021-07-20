@@ -23,6 +23,9 @@ SOFTWARE.
 package format
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/amplia-iiot/yutil/internal/io"
 )
 
@@ -57,25 +60,36 @@ func FormatFileInPlaceB(file, backupSuffix string) error {
 }
 
 // FormatFilesInPlace formats a list of yaml files, modifying the original
-// files.
+// files. An attempt to format each file will be made regardless of previous
+// errors. The final error message will specify all errored files.
 func FormatFilesInPlace(files []string) error {
+	var errors []string
 	for _, file := range files {
 		err := FormatFileInPlace(file)
 		if err != nil {
-			return err
+			errors = append(errors, fmt.Sprintf("%s - %s", file, err.Error()))
 		}
+	}
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, "\n"))
 	}
 	return nil
 }
 
 // FormatFilesInPlaceB formats a list of yaml files, creating a backup for each
-// file with a suffix before modifying each file.
+// file with a suffix before modifying each file. An attempt to format each file
+// will be made regardless of previous errors. The final error message will
+// specify all errored files.
 func FormatFilesInPlaceB(files []string, backupSuffix string) error {
+	var errors []string
 	for _, file := range files {
 		err := FormatFileInPlaceB(file, backupSuffix)
 		if err != nil {
-			return err
+			errors = append(errors, fmt.Sprintf("%s - %s", file, err.Error()))
 		}
+	}
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, "\n"))
 	}
 	return nil
 }

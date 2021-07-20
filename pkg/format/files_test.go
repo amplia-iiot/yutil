@@ -284,13 +284,13 @@ func TestFormatFilesInPlaceInvalid(t *testing.T) {
 		// Not exists
 		{
 			// Do not existing file, use one directly in tmp (that doesn't exists)
-			tmpPath: "tmp/not-exists",
-			invalid: true,
+			tmpPath:  "tmp/not-exists",
+			invalid:  true,
+			expected: "no such file or directory",
 		},
-		// Will fail because there is a previous error
+		// OK
 		{
-			file:    "prod",
-			invalid: true,
+			file: "prod",
 		},
 	}
 	// Prepare tmp folder
@@ -312,6 +312,7 @@ func TestFormatFilesInPlaceInvalid(t *testing.T) {
 	for _, d := range data {
 		if d.invalid {
 			itesting.AssertError(t, d.expected, err)
+			itesting.AssertError(t, d.tmpPath, err)
 		}
 		if d.copiedToTmp {
 			if d.invalid {
@@ -390,13 +391,14 @@ func TestFormatFilesInPlaceBInvalid(t *testing.T) {
 		// Not exists
 		{
 			// Do not existing file, use one directly in tmp (that doesn't exists)
-			tmpPath: "tmp/not-exists",
-			invalid: true,
+			tmpPath:  "tmp/not-exists",
+			expected: "no such file or directory",
+			invalid:  true,
 		},
-		// Will fail because there is a previous error
+		// OK
 		{
-			file:    "prod",
-			invalid: true,
+			file:              "prod",
+			shouldBackupExist: true,
 		},
 	}
 	// Prepare tmp folder
@@ -418,6 +420,7 @@ func TestFormatFilesInPlaceBInvalid(t *testing.T) {
 	for _, d := range data {
 		if d.invalid {
 			itesting.AssertError(t, d.expected, err)
+			itesting.AssertError(t, d.tmpPath, err)
 		}
 		if d.copiedToTmp {
 			if d.invalid {
