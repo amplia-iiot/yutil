@@ -209,6 +209,7 @@ func TestFormatFileInPlaceBInvalid(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer os.Remove(d.tmpPath)
+			defer os.Remove(d.tmpPath + ".bak")
 			copiedToTmp = true
 		}
 		err := FormatFileInPlaceB(d.tmpPath, ".bak")
@@ -243,6 +244,7 @@ func TestFormatFilesInPlace(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer os.Remove(tmpDir)
 	for _, file := range files {
 		tmpFile := fmt.Sprintf("%s/%s.yml", tmpDir, file)
 		err := io.Copy(fileToBeFormatted(file), tmpFile)
@@ -344,6 +346,7 @@ func TestFormatFilesInPlaceB(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer os.Remove(tmpDir)
 	for _, file := range files {
 		tmpFile := fmt.Sprintf("%s/%s.yml", tmpDir, file)
 		err := io.Copy(fileToBeFormatted(file), tmpFile)
@@ -351,6 +354,7 @@ func TestFormatFilesInPlaceB(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer os.Remove(tmpFile)
+		defer os.Remove(tmpFile + ".bak")
 		tmpFiles = append(tmpFiles, tmpFile)
 	}
 	err = FormatFilesInPlaceB(tmpFiles, ".bak")
@@ -413,6 +417,7 @@ func TestFormatFilesInPlaceBInvalid(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer os.Remove(d.tmpPath)
+			defer os.Remove(d.tmpPath + ".bak")
 			d.copiedToTmp = true
 		}
 	}
