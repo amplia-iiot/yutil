@@ -91,7 +91,11 @@ changelog: ## Generate changelog
 version: VERSION=$(shell svu next || echo "v1.0.0")
 version: changelog ## Generate version
 	git add CHANGELOG.md
+ifdef CO_AUTHOR
+	git commit -m "chore: update changelog for $(VERSION)" -m "Co-authored-by: $(CO_AUTHOR)"
+else
 	git commit -m "chore: update changelog for $(VERSION)"
+endif
 	git tag -a $(VERSION) -m "$(patsubst v%,Version %,$(VERSION))"
 
 release-notes: ## Print release notes for current version

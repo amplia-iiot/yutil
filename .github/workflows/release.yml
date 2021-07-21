@@ -4,18 +4,104 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      preview:
+        description: 'Preview only?'
+        required: true
+        default: 'true'
 
 env:
   GO_VERSION: "1.16"
 
 jobs:
-  release:
+  preview:
+    name: Preview release
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.preview == 'true'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Use Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Set up environment
+        run: make set-up
+      - name: Version number will be...
+        run: svu next
+      - name: Release notes will be...
+        run: make -s release-notes
+      - name: Changelog will be...
+        run: make -s changelog && cat CHANGELOG.md
+      - name: Test release
+        run: make release
+  version:
+    name: Generate version?
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.preview == 'false'
+      )
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      # Only generate version if workflow_dispatch
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          fetch-depth: 0
+      - name: Use Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v2
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Set up environment
+        if: github.event_name == 'workflow_dispatch'
+        run: make set-up
+      - name: Generate version
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          make version
+        env:
+          CO_AUTHOR: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+      - name: Push
+        uses: ad-m/github-push-action@v0.6.0
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          tags: true
+      - name: Configure tag for release
+        id: tag
+        run: echo "::set-output name=tag::$(git tag --points-at HEAD)"
+  release:
+    name: Publish release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.preview == 'false'
+      )
+    needs: version
+    steps:
+      - uses: haya14busa/action-cond@v1
+        id: ref
+        with:
+          cond: ${{ github.event_name == 'workflow_dispatch' }}
+          if_true: ${{ needs.version.outputs.tag }}
+          if_false: ${{ github.ref }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: '${{ steps.ref.outputs.value }}'
       - name: Use Go ${{ env.GO_VERSION }}
         uses: actions/setup-go@v2
         with:
