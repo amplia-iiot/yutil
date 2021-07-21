@@ -195,7 +195,9 @@ You are welcome to report bugs or add feature requests and comments in [issues].
 
 `make version` contains the steps to generate a new version. It uses `svu` to calculate the next version number based on the _git log_ and generates the [CHANGELOG.md] with `git-chglog`
 
-Push the generated _tag_ and the _release_ github action will generate the release.
+Push the generated _tag_ and the _release_ workflow will generate the release.
+
+Or you can trigger a manual run of the [_release_ workflow](https://github.com/amplia-iiot/yutil/actions/workflows/release.yml) with _preview_ set to `false` to generate the commit and tag automatically.
 
 ## CHANGELOG
 
