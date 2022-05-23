@@ -2,6 +2,16 @@
 ## [Unreleased]
 
 
+<a name="v2.0.1"></a>
+## [v2.0.1] - 2022-05-23
+
+### Bug Fixes
+- **merge:** fix merging of zero value variables
+
+### Build changes
+- use Go 1.18
+
+
 <a name="v2.0.0"></a>
 ## [v2.0.0] - 2021-07-21
 
@@ -68,5 +78,6 @@ intended to leave them open.
 - **help:** capitalize all short command messages
 
 
-[Unreleased]: https://github.com/amplia-iiot/yutil/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/amplia-iiot/yutil/compare/v2.0.1...HEAD
+[v2.0.1]: https://github.com/amplia-iiot/yutil/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/amplia-iiot/yutil/compare/v1.0.0...v2.0.0
