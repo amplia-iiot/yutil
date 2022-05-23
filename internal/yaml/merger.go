@@ -25,8 +25,8 @@ package yaml
 import "github.com/imdario/mergo"
 
 var Merge = func(base map[string]interface{}, changes map[string]interface{}) (map[string]interface{}, error) {
-	if err := mergo.Merge(&changes, base); err != nil {
+	if err := mergo.Merge(&base, changes, mergo.WithOverwriteWithEmptyValue); err != nil {
 		return nil, err
 	}
-	return changes, nil
+	return base, nil
 }

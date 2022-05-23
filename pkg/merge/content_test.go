@@ -81,6 +81,52 @@ func TestMergeContents(t *testing.T) {
 			changes:  "data: {          two: two}\ndata2: {two: two}\ndata3: {value: 2}",
 			expected: "data: {one: one, two: two}\ndata2: {two: two}\ndata3: {value: 2}",
 		},
+		// Empty values (https://github.com/amplia-iiot/yutil/issues/3)
+		{
+			base:     `data: {one: one}`,
+			changes:  `data: {one: 0}`,
+			expected: `data: {one: 0}`,
+		},
+		{
+			base:     `data: {one: one}`,
+			changes:  `data: {one: ''}`,
+			expected: `data: {one: ''}`,
+		},
+		{
+			base:     `data: {one: true}`,
+			changes:  `data: {one: false}`,
+			expected: `data: {one: false}`,
+		},
+		{
+			base:     `data: {one: [one]}`,
+			changes:  `data: {one: []}`,
+			expected: `data: {one: []}`,
+		},
+		{
+			base:     `data: {one: {two: 2}}`,
+			changes:  `data: {one: {}}`,
+			expected: `data: {one: {two: 2}}`, // Special case, empty struct does not override
+		},
+		{
+			base:     `data: {one: {two: 2}}`,
+			changes:  `data: {one: null}`,
+			expected: `data: {one: null}`, // You need null to override a struct
+		},
+		{
+			base:     "data: {one: one          , three: three}                   \ndata3: {value: 1}\ndata4: {value: 4}",
+			changes:  "data: {          two: two, three:      }\ndata2: {two: two}\ndata3: {value: 2}\ndata4: ",
+			expected: "data: {one: one, two: two, three:      }\ndata2: {two: two}\ndata3: {value: 2}\ndata4: ",
+		},
+		{
+			base:     "data: {one: one          , three: three}                   \ndata3: {value: 1}\ndata4: {value: 4}",
+			changes:  "data: {          two: two, three:      }\ndata2: {two: two}\ndata3: {value: 2}\ndata4: ",
+			expected: "data: {one: one, two: two, three: null }\ndata2: {two: two}\ndata3: {value: 2}\ndata4: null",
+		},
+		{
+			base:     "data: {one: one          , three: three}                   \ndata3: {value: 1}\ndata4: {value: 4}",
+			changes:  "data: {          two: two, three: null }\ndata2: {two: two}\ndata3: {value: 2}\ndata4: null",
+			expected: "data: {one: one, two: two, three:      }\ndata2: {two: two}\ndata3: {value: 2}\ndata4:",
+		},
 	} {
 		merged, err := MergeContents(i.base, i.changes)
 		if err != nil {

@@ -1,0 +1,12 @@
+app:
+  number: 0
+  boolean: false
+  string: ''
+  array: []
+  node:
+  child:
+    number: 0
+    boolean: false
+    string: ''
+    array: []
+    node:

@@ -1,0 +1,14 @@
+app:
+  number: 1
+  boolean: true
+  string: test
+  array: [test, element]
+  node: {}
+  child:
+    number: 0
+    boolean: false
+    string: ''
+    array: []
+    node:
+      subChild:
+        element: test

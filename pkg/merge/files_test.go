@@ -301,6 +301,8 @@ func TestMergeAllFilesToFile(t *testing.T) {
 		{"base", "prod"},
 		{"base", "dev", "docker"},
 		{"base", "prod", "docker"},
+		// Empty values (https://github.com/amplia-iiot/yutil/issues/3)
+		{"issue-3-base", "issue-3-changes"},
 	} {
 		tmpPath := itesting.TempFilePath(t, "merged-*.yml")
 		defer os.Remove(tmpPath)
