@@ -38,7 +38,7 @@ set-up: ## Set up development environment
 	$(GOCMD) install github.com/jstemmer/go-junit-report@latest
 	$(GOCMD) install github.com/cosmtrek/air@latest
 	$(GOCMD) install github.com/spf13/cobra-cli@latest
-	$(GOCMD) install github.com/goreleaser/goreleaser@latest
+	$(GOCMD) install github.com/goreleaser/goreleaser@v1.18.2
 	$(GOCMD) install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 	$(GOCMD) install github.com/caarlos0/svu@latest
 	$(GOCMD) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest

@@ -12,6 +12,12 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=amplia-iiot
 release:
@@ -21,7 +27,6 @@ archives:
       darwin: Darwin
       linux: Linux
       windows: Windows
-      386: i386
       amd64: x86_64
     files:
       - LICENSE*
@@ -49,5 +54,4 @@ nfpms:
   - rpm
   replacements:
     linux: Linux
-    386: i386
     amd64: x86_64
