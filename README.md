@@ -180,7 +180,7 @@ You may pass as argument the desired config file:
 
 ## Development
 
-1. Use Golang version `>= 1.16`
+1. Use Golang version `>= 1.20`
 2. Fork (https://github.com/amplia-iiot/yutil)
 3. Run `make set-up` to install dev tools
 4. Create a feature branch
