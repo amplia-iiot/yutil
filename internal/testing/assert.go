@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021 amplia-iiot
+Copyright (c) 2021-2023 amplia-iiot
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,9 @@ func AssertError(t *testing.T, expected string, got error) {
 	}
 	if expected != "" && !strings.Contains(got.Error(), expected) {
 		t.Fatalf("Error '%s' does not contain '%s'", got, expected)
+	}
+	if expected == "" && got != nil {
+		t.Fatalf("Error '%s' not expected", got)
 	}
 }
 
