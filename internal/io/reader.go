@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021 amplia-iiot
+Copyright (c) 2021-2023 amplia-iiot
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,12 @@ SOFTWARE.
 package io
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 )
 
 var Read = func(file string) ([]byte, error) {
-	return ioutil.ReadFile(file)
+	return os.ReadFile(file)
 }
 
 var ReadAsString = func(file string) (string, error) {
@@ -42,7 +42,7 @@ var ReceivedStdin = func() bool {
 }
 
 var ReadStdin = func() (string, error) {
-	bytes, err := ioutil.ReadAll(os.Stdin)
+	bytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		return "", err
 	}
