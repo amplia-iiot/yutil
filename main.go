@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021 amplia-iiot
+Copyright (c) 2021-2023 amplia-iiot
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,7 @@ SOFTWARE.
 // yutil provides common functionality for working with YAML files.
 package main
 
-import (
-	"github.com/amplia-iiot/yutil/cmd"
-)
+import "github.com/amplia-iiot/yutil/cmd"
 
 // info is passed in via LDFLAGS
 var (

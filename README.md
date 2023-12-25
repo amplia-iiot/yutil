@@ -23,6 +23,7 @@ Common functionality for working with YAML files
 		- [Quick Start](#quick-start)
 			- [Format](#format)
 			- [Merge](#merge)
+			- [Replace](#replace)
 			- [External configuration](#external-configuration)
 	- [Development](#development)
 	- [Release Process](#release-process)
@@ -31,7 +32,9 @@ Common functionality for working with YAML files
 
 ## Features
 
-- [Merge](#merge) files
+- [Format](#format) yaml files
+- [Merge](#merge) yaml files
+- [Replace](#replace) files in a directory with a template engine (golang or jinja2) with the replacements of one or more yaml files.
 
 ## Getting started
 
@@ -146,6 +149,66 @@ You may ignore this input (`--no-input`) if you can't control what's piped to `y
 
 ```bash
 echo "this is not a yaml" | yutil --no-input merge base.yml changes.yml
+```
+
+#### Replace
+
+This searches files and passes them through a template engine using the replacement files as variables (multiple replacement files will be merged in ascending level of importance in the hierarchy).
+
+Available template engines:
+- **Golang** (default): Unless configured otherwise, uses each \*.tmpl and \*.tmpl.\* file as go [text/template](https://pkg.go.dev/text/template) with [slim-sprig functions](https://go-task.github.io/slim-sprig/), writing the result to a file with the same name but without that extension. A file named `test.tmpl.txt` will result in `test.txt`
+- **Jinja2**: Unless configured otherwise, uses each \*.j2 and \*.j2.\* file as jinja2 template, writing the result to a file with the same name but without that extension. A file named `test.j2.txt` will result in `test.txt`
+
+If no engine is picked the default golang template with slim-sprig functions will be used.
+
+```bash
+yutil replace -r config.yml
+yutil replace -r base.yml -r changes.yml
+```
+
+To use the jinja2 engine:
+
+```bash
+yutil replace --jinja2
+```
+
+By default `yutil` uses _stdin_ as the first _YAML_ replacement file:
+
+```bash
+cat changes.yml | yutil replace
+cat base.yml | yutil replace -r changes.yml
+cat base.yml | yutil replace -r changes.yml -r important.yml
+```
+
+The extension config is used for including those files by default (unless include config is passed) and renaming replaced files accordingly. Use include and exclude to filter files (the glob patterns are tested with both file name and file path):
+
+```bash
+yutil replace -r config.yml -e .go -e .gotempl
+# This command uses the go template engine on files with both .go and .gotempl extensions including those files.
+yutil replace -r config.yml -e .go -e .gotempl --include '*.go.*'
+# With the previous command .gotempl files are not used because the include filter has been overriden and allows only files with .go. in its name or path.
+yutil replace -r config.yml --include 'directory/*.conf'
+yutil replace -r config.yml --jinja2 --exclude '*/secret/*'
+```
+
+By default only the files inside the current directory and its subdirectories are passed through the template engine. Use the directory config to change it:
+
+```bash
+yutil replace -r base.yml -r changes.yml -d directory
+```
+
+Normally, all replacements inside the replacement files are passed, to use a subset of variables the root node can be adjusted:
+
+```bash
+yutil replace -n root_node
+# Only nodes inside root_node are directly available, without root_node as first element
+```
+
+To include environment variables as variables for the template engine use the env flag:
+
+```bash
+yutil replace --env
+# Env vars are available inside the env node
 ```
 
 #### External configuration

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021 amplia-iiot
+Copyright (c) 2021-2023 amplia-iiot
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -129,11 +129,11 @@ func TestMergeAllFilesInvalid(t *testing.T) {
 		// At least two
 		{
 			files:    []string{},
-			expected: "",
+			expected: "slice must contain at least two files",
 		},
 		{
 			files:    []string{"base"},
-			expected: "",
+			expected: "slice must contain at least two files",
 		},
 		// Parsing error
 		{
